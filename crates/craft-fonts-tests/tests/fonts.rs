@@ -1,6 +1,6 @@
 //! Assertions on the font files themselves.
 
-use craft_fonts::{FONTS, Font, for_script};
+use craft_fonts::{FONTS, Font, ROLE_UI, for_script};
 use sha2::{Digest, Sha256};
 use skrifa::raw::TableProvider;
 use skrifa::{FontRef, MetadataProvider, string::StringId};
@@ -358,4 +358,97 @@ fn symbol_fonts_together_cover_key_symbols() {
         .filter(|c| refs.iter().all(|r| r.charmap().map(*c).is_none()))
         .collect();
     assert!(missing.is_empty(), "no Zsym font has {missing:?}");
+}
+
+/// The basic character set an interface face for `script` must cover before an app's build cuts
+/// it to the app's catalogs. The Han and Hangul lists are the first 3,500 Han of GB 2312 level 1,
+/// the first 3,500 Han of Big5 level 1 and the 2,350 KS X 1001 Hangul syllables, in code order
+/// (decoded from their legacy encodings with Python's codecs).
+fn ui_basic_set(script: &str) -> Option<String> {
+    match script {
+        "Jpan" => Some(
+            ('\u{3041}'..='\u{3096}')
+                .chain('\u{30A1}'..='\u{30FA}')
+                .collect(),
+        ),
+        "Hans" => Some(
+            include_str!("../data/gb2312-han.txt")
+                .trim_end()
+                .to_string(),
+        ),
+        "Hant" | "Hant-HK" => Some(include_str!("../data/big5-han.txt").trim_end().to_string()),
+        "Kore" => Some(
+            include_str!("../data/ksx1001-hangul.txt")
+                .trim_end()
+                .to_string(),
+        ),
+        _ => None,
+    }
+}
+
+/// Each interface face (`role` `ui`) is a TrueType-outline face, because the apps' build-time
+/// subsetter cuts CFF faces wrongly; covers its script's basic set; and keeps the layout features
+/// interface text needs. Every CJK script has one.
+#[test]
+fn ui_faces_are_glyf_sources_for_their_script() {
+    let ui: Vec<&Font> = FONTS.iter().filter(|f| f.role == Some(ROLE_UI)).collect();
+    let mut scripts = std::collections::BTreeSet::new();
+    for f in ui {
+        let data = bytes(f);
+        let font = FontRef::new(&data).unwrap_or_else(|e| panic!("{}: {e}", f.file));
+        assert!(
+            font.table_data(skrifa::Tag::new(b"CFF ")).is_none() && font.glyf().is_ok(),
+            "{}: not a glyf face",
+            f.file
+        );
+        let charmap = font.charmap();
+        let mut sets = 0;
+        for script in f.scripts {
+            let Some(set) = ui_basic_set(script) else {
+                continue;
+            };
+            let missing: String = set.chars().filter(|c| charmap.map(*c).is_none()).collect();
+            assert!(
+                missing.is_empty(),
+                "{} lacks {} {script} basic characters: {missing:?}",
+                f.family,
+                missing.chars().count()
+            );
+            scripts.insert(*script);
+            sets += 1;
+        }
+        assert!(
+            sets > 0,
+            "{}: no basic set for scripts {:?}",
+            f.file,
+            f.scripts
+        );
+        let tags: Vec<String> = font
+            .gsub()
+            .and_then(|g| g.feature_list())
+            .map(|l| {
+                l.feature_records()
+                    .iter()
+                    .map(|r| r.feature_tag().to_string())
+                    .collect()
+            })
+            .unwrap_or_default();
+        // BIZ UDPGothic is Japanese-only and has no locl; the Noto faces share code points across
+        // languages and need theirs.
+        let needed: &[&str] = if f.scripts.contains(&"Jpan") {
+            &["vert"]
+        } else {
+            &["vert", "locl"]
+        };
+        for tag in needed {
+            assert!(
+                tags.iter().any(|t| t == tag),
+                "{}: no {tag} GSUB feature (has {tags:?})",
+                f.family
+            );
+        }
+    }
+    for script in ["Hans", "Hant", "Hant-HK", "Jpan", "Kore"] {
+        assert!(scripts.contains(script), "no interface face for {script}");
+    }
 }

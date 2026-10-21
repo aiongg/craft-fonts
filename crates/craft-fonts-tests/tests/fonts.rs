@@ -239,3 +239,15 @@ fn armenian_fonts_cover_armenian_text() {
         ),
     );
 }
+
+#[test]
+fn ethiopic_fonts_cover_ethiopic_text() {
+    covers(
+        "Ethi",
+        concat!(
+            "ሀሁሂሃሄህሆለሉሊላሌልሎሐመሙሚማሜምሞሠረሩሪራሬርሮሰሱሲሳሴስሶሸቀቁቂቃቄቅቆበቡቢባ",
+            "ቤብቦቨተቱቲታቴትቶቸኀነኑኒናኔንኖኘአኡኢኣኤእኦከኸወዐዘዠየደጀገጠጨጰጸፀፈፐ",
+            "።፣፤፥፦፧፨፩፪፫፬፭፮፯፰፱፲፻",
+        ),
+    );
+}

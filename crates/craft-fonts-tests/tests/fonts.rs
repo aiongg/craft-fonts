@@ -339,3 +339,23 @@ fn colour_emoji_is_colrv1() {
     assert_eq!(colr.version(), 1, "{}: COLR version", f.file);
     assert!(font.cbdt().is_err(), "{}: has bitmap (CBDT) glyphs", f.file);
 }
+
+/// Modifier and key symbols in shortcut labels and the UI translations. No one Noto face has
+/// them all: Symbols 2 has the modifiers, Symbols has ⌃ ⌄ ⎋, Math has the return, tab and page
+/// arrows.
+#[test]
+fn symbol_fonts_together_cover_key_symbols() {
+    let fonts: Vec<&Font> = for_script("Zsym").collect();
+    assert!(!fonts.is_empty(), "the manifest lists no Zsym font");
+    let data: Vec<Vec<u8>> = fonts.iter().map(|f| bytes(f)).collect();
+    let refs: Vec<FontRef> = data
+        .iter()
+        .zip(&fonts)
+        .map(|(d, f)| FontRef::new(d).unwrap_or_else(|e| panic!("{}: {e}", f.file)))
+        .collect();
+    let missing: String = "⇧⇪⌃⌄⌥⌘⌫⌦⌤⌧⎋↩↵⏎⇥⇤⇞⇟↖↘←↑→↓↔↕↗⏏"
+        .chars()
+        .filter(|c| refs.iter().all(|r| r.charmap().map(*c).is_none()))
+        .collect();
+    assert!(missing.is_empty(), "no Zsym font has {missing:?}");
+}

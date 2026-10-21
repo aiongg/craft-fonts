@@ -41,6 +41,9 @@ This library is meant to have the following:
 | Noto Sans | Regular (variable: wdth, wght) | Latin, Cyrillic and Greek fallback (Vietnamese, Central European, Turkish, Ukrainian, Serbian, Kazakh, Greek) and Devanagari (sans) | OFL-1.1 |
 | Noto Color Emoji | Regular (COLRv1 colour vector glyphs) | Colour emoji | OFL-1.1 |
 | Noto Emoji | Regular (variable: wght) | Monochrome emoji, the last emoji fallback | OFL-1.1 |
+| Noto Sans Symbols | Regular (variable: wght) | Key and UI symbols (⌃ ⌄ ⎋, arrows), with Symbols 2 and Math | OFL-1.1 |
+| Noto Sans Symbols 2 | Regular | Key and UI symbols (⇧ ⌥ ⌘ ⌫ ⌦ ⏏ …) | OFL-1.1 |
+| Noto Sans Math | Regular | Math symbols; the return, tab and page key arrows (↩ ↵ ⇥ ⇤ ⇞ ⇟) | OFL-1.1 |
 
 ## How the apps use it
 

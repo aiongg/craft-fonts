@@ -162,8 +162,13 @@ fn japanese_fonts_support_vertical_text() {
 
 /// Coverage of `text` by every font tagged with `script`.
 fn covers(script: &str, text: &str) {
-    let fonts: Vec<&Font> = for_script(script).collect();
-    assert!(!fonts.is_empty(), "the manifest lists no {script} font");
+    covered_by(script, for_script(script), text);
+}
+
+/// Coverage of `text` by each of `fonts` (`what` names them in the failure message).
+fn covered_by<'a>(what: &str, fonts: impl Iterator<Item = &'a Font>, text: &str) {
+    let fonts: Vec<&Font> = fonts.collect();
+    assert!(!fonts.is_empty(), "the manifest lists no {what} font");
     for f in fonts {
         let data = bytes(f);
         let font = FontRef::new(&data).unwrap_or_else(|e| panic!("{}: {e}", f.file));
@@ -248,6 +253,61 @@ fn ethiopic_fonts_cover_ethiopic_text() {
             "ሀሁሂሃሄህሆለሉሊላሌልሎሐመሙሚማሜምሞሠረሩሪራሬርሮሰሱሲሳሴስሶሸቀቁቂቃቄቅቆበቡቢባ",
             "ቤብቦቨተቱቲታቴትቶቸኀነኑኒናኔንኖኘአኡኢኣኤእኦከኸወዐዘዠየደጀገጠጨጰጸፀፈፐ",
             "።፣፤፥፦፧፨፩፪፫፬፭፮፯፰፱፲፻",
+        ),
+    );
+}
+
+#[test]
+fn cyrillic_fonts_cover_cyrillic_text() {
+    covers(
+        "Cyrl",
+        concat!(
+            "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя",
+            "ЄІЇҐєіїґ",         // Ukrainian
+            "ЂЈЉЊЋЏђјљњћџ",     // Serbian
+            "ѐѝ",               // Bulgarian
+            "ӘҒҚҢӨҰҮҺәғқңөұүһ", // Kazakh
+            "№«»„“₴₽₸",
+        ),
+    );
+}
+
+#[test]
+fn greek_fonts_cover_greek_text() {
+    covers(
+        "Grek",
+        concat!(
+            "ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩαβγδεζηθικλμνξοπρσςτυφχψω",
+            "άέήίόύώΐΰϊϋΆΈΉΊΌΎΏ·;",
+        ),
+    );
+}
+
+#[test]
+fn devanagari_fonts_cover_devanagari_text() {
+    covers(
+        "Deva",
+        concat!(
+            "अआइईउऊऋएऐओऔकखगघङचछजझञटठडढणतथदधनपफबभमयरलवशषसह",
+            "ािीुूृेैोौंःँ़्",
+            "।॥०१२३४५६७८९₹",
+        ),
+    );
+}
+
+/// The UI translations' Latin beyond Western Europe: Vietnamese, Central European, Turkish,
+/// Baltic. The Japanese faces lack Vietnamese and the CJK faces lack the rest, so the Latin
+/// fallback is Noto Sans.
+#[test]
+fn noto_sans_covers_extended_latin() {
+    covered_by(
+        "Noto Sans",
+        FONTS.iter().filter(|f| f.family == "Noto Sans"),
+        concat!(
+            "ĂăÂâĐđÊêÔôƠơƯưẠạẢảẤấẦầẨẩẪẫẬậẮắẰằẲẳẴẵẶặẸẹẺẻẼẽẾếỀềỂểỄễỆệỈỉỊịỌọỎỏỐốỒồỔổỖỗỘộ",
+            "ỚớỜờỞởỠỡỢợỤụỦủỨứỪừỬửỮữỰựỲỳỴỵỶỷỸỹ₫",
+            "ąćęłńóśźżĄĆĘŁŃÓŚŹŻčďěňřšťůžČĎĚŇŘŠŤŮŽőűŐŰ",
+            "ğışĞİŞõäöüßÕÄÖÜẞėįųūĖĮŲŪāēīĀĒĪņļķģŅĻĶĢⁿ€",
         ),
     );
 }

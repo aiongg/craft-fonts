@@ -38,6 +38,7 @@ This library is meant to have the following:
 | Noto Sans Georgian | Regular (variable: wdth, wght) | Georgian UI and document text (sans) | OFL-1.1 |
 | Noto Sans Armenian | Regular (variable: wdth, wght) | Armenian UI and document text (sans) | OFL-1.1 |
 | Noto Sans Ethiopic | Regular (variable: wdth, wght) | Ethiopic (Amharic, Tigrinya) UI and document text (sans) | OFL-1.1 |
+| Noto Sans | Regular (variable: wdth, wght) | Latin, Cyrillic and Greek fallback (Vietnamese, Central European, Turkish, Ukrainian, Serbian, Kazakh, Greek) and Devanagari (sans) | OFL-1.1 |
 
 ## How the apps use it
 

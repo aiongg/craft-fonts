@@ -227,3 +227,15 @@ fn georgian_fonts_cover_georgian_text() {
         ),
     );
 }
+
+#[test]
+fn armenian_fonts_cover_armenian_text() {
+    covers(
+        "Armn",
+        concat!(
+            "ԱԲԳԴԵԶԷԸԹԺԻԼԽԾԿՀՁՂՃՄՅՆՇՈՉՊՋՌՍՎՏՐՑՒՓՔՕՖ",
+            "աբգդեզէըթժիլխծկհձղճմյնշոչպջռսվտրցւփքօֆև",
+            "։՝՛՞֊«»",
+        ),
+    );
+}

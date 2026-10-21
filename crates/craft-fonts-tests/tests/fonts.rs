@@ -311,3 +311,31 @@ fn noto_sans_covers_extended_latin() {
         ),
     );
 }
+
+#[test]
+fn emoji_fonts_cover_emoji() {
+    covers(
+        "Zsye",
+        concat!(
+            "😀😂😍🥺🫠👍👋👩💻🧑🎨🎉🔥⭐✅❌⚠❤🌍🪿📁📂🔍🏳🏴",
+            "🇯🇵🇺🇳",       // regional indicators (flags)
+            "\u{200d}🏽", // ZWJ sequences, skin tone
+        ),
+    );
+}
+
+#[test]
+fn colour_emoji_is_colrv1() {
+    // egui and the web renderers draw COLRv1 outlines; the CBDT bitmap build would draw nothing.
+    let f = FONTS
+        .iter()
+        .find(|f| f.family == "Noto Color Emoji")
+        .unwrap_or_else(|| panic!("the manifest lists no Noto Color Emoji"));
+    let data = bytes(f);
+    let font = FontRef::new(&data).unwrap_or_else(|e| panic!("{}: {e}", f.file));
+    let colr = font
+        .colr()
+        .unwrap_or_else(|e| panic!("{}: no COLR table: {e}", f.file));
+    assert_eq!(colr.version(), 1, "{}: COLR version", f.file);
+    assert!(font.cbdt().is_err(), "{}: has bitmap (CBDT) glyphs", f.file);
+}

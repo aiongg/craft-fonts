@@ -17,6 +17,8 @@ upstream sources (checked by `craft-fonts-tests`, which verifies each SHA-256 in
 | `fonts/noto-sans-armenian/NotoSansArmenian.ttf` | Noto Sans Armenian (variable) | The Noto Project Authors | [google/fonts@47d54ca](https://github.com/google/fonts/tree/47d54ca1ebb14fd864695f1d39dc734f39017c33/ofl/notosansarmenian) | OFL-1.1 (`fonts/noto-sans-armenian/OFL.txt`) |
 | `fonts/noto-sans-ethiopic/NotoSansEthiopic.ttf` | Noto Sans Ethiopic (variable) | The Noto Project Authors | [google/fonts@47d54ca](https://github.com/google/fonts/tree/47d54ca1ebb14fd864695f1d39dc734f39017c33/ofl/notosansethiopic) | OFL-1.1 (`fonts/noto-sans-ethiopic/OFL.txt`) |
 | `fonts/noto-sans/NotoSans.ttf` | Noto Sans (variable) | The Noto Project Authors | [google/fonts@47d54ca](https://github.com/google/fonts/tree/47d54ca1ebb14fd864695f1d39dc734f39017c33/ofl/notosans) | OFL-1.1 (`fonts/noto-sans/OFL.txt`) |
+| `fonts/noto-color-emoji/Noto-COLRv1.ttf` | Noto Color Emoji (COLRv1) | Google | [googlefonts/noto-emoji@e20cbc2](https://github.com/googlefonts/noto-emoji/tree/e20cbc2bbec1926686be9f9bee7d1d2cfa1fea0e/2D/fonts) (release v2026-09-24-unicode18_0) | OFL-1.1 (`fonts/noto-color-emoji/OFL.txt`) |
+| `fonts/noto-emoji/NotoEmoji.ttf` | Noto Emoji (variable) | Google | [google/fonts@47d54ca](https://github.com/google/fonts/tree/47d54ca1ebb14fd864695f1d39dc734f39017c33/ofl/notoemoji) | OFL-1.1 (`fonts/noto-emoji/OFL.txt`) |
 
 The OFL allows these fonts to be bundled, embedded and redistributed with software, provided the
 licence text travels with them and the fonts are not sold on their own. "Shippori Mincho",

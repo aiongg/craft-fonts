@@ -24,6 +24,7 @@ This library is meant to have the following:
 | `fonts/manifest.txt` | Machine-readable list of the default fonts: family, style, file, scripts, licence, SHA-256, pinned source. |
 | `fonts/latin-manifest.txt` | Opt-in Latin presentation catalog, same eight-field format: 16 families and 51 faces (about 19.5 MiB). Not in the default `FONTS` or `embed` payload. |
 | `fonts/simplified-chinese-manifest.txt` | Opt-in native-only Simplified Chinese row, same eight-field format. Not in `FONTS` or the embed payload. |
+| `fonts/ui-candidates-manifest.txt` | Opt-in candidate interface faces for the design-system specimen (Inter, IBM Plex Sans, Source Sans 3, JetBrains Mono, IBM Plex Mono, Source Code Pro; Regular and SemiBold, Latin/Greek/Cyrillic subsets, about 1.5 MB). Not in `FONTS` or any embed feature; rebuilt by `scripts/subset-ui-candidates.sh`. |
 | `ATTRIBUTION.md` | Authors, pinned sources and licences. |
 | `crates/craft-fonts` | Rust: the default and opt-in Latin manifests as static tables, finding a checkout (`CRAFT_FONTS_DIR`), loading them, and `embed` / `embed-latin` features that compile the fonts in. |
 | `crates/craft-fonts-tests` | Tests asserted on these fonts: checksums, licences, family/style names, Inter/Latin provenance and faces, Japanese/Korean/Hebrew/Devanagari/symbol coverage and outlines, static-face metadata and vertical-text (`vert`/`vrt2`) support. |
@@ -78,6 +79,14 @@ The eight Adobe-authored Source Sans 3 / Source Serif 4 faces stay in this centr
 provenance and reuse. Native consumers that must not embed Adobe fonts filter those two families,
 leaving the 43 permitted Latin faces; DeckCraft already filters them and FigCraft adds the same
 family filter in its own build. The catalog and its hashes do not depend on any consumer filter.
+
+### Interface-face candidates (`fonts/ui-candidates-manifest.txt`, opt-in)
+
+Static Regular and SemiBold instances of Inter, IBM Plex Sans, Source Sans 3, JetBrains Mono, IBM
+Plex Mono and Source Code Pro, subset to Latin, Greek and Cyrillic interface text with all layout
+features kept (1,495,524 bytes in total). They exist for the design-system gallery's face specimen
+until the owner picks one, so they are not in `fonts/manifest.txt`, `FONTS` or any embed feature.
+`scripts/subset-ui-candidates.sh` rebuilds them from the pinned release archives.
 
 ## How the apps use it
 

@@ -1,10 +1,11 @@
 # Font attribution
 
-Every font in `fonts/`, with its source and licence. The files are byte-identical to the pinned
+Every font in `fonts/`, with its source and licence. Except for the interface-face candidates, the files are byte-identical to the pinned
 upstream sources (checked by `craft-fonts-tests`, which verifies each SHA-256 in the manifest that
 lists it: `fonts/manifest.txt` for the default embedded set, `fonts/latin-manifest.txt` for the
-opt-in Latin presentation faces, and `fonts/simplified-chinese-manifest.txt` for the opt-in
-native-only Simplified Chinese face).
+opt-in Latin presentation faces, `fonts/ui-candidates-manifest.txt` for the opt-in interface-face
+candidates, and `fonts/simplified-chinese-manifest.txt` for the opt-in native-only Simplified
+Chinese face). The interface-face candidates are subsets, described in their own section below.
 
 | File | Family / style | Author | Source (pinned) | Licence |
 |---|---|---|---|---|
@@ -106,3 +107,26 @@ for provenance and reuse, but consumers that must not embed Adobe fonts filter t
 (8 of the 51 faces, 2,594,420 bytes) and keep the remaining 43. DeckCraft already applies that
 filter; FigCraft adds it in its own build. Filtering is a consumer obligation and does not change
 the manifest or these pinned hashes.
+
+## Interface-face candidates (`fonts/ui-candidates-manifest.txt`)
+
+Opt-in static Regular and SemiBold faces for the Craft design-system specimen, until the owner
+picks one: 6 families, 12 faces, about 1.5 MB (1,495,524 bytes). All are OFL-1.1. They are not in the default
+`FONTS` table or any embed feature. Unlike the fonts above, these files are **subsets** of the
+pinned release files: Basic Latin through Latin Extended Additional, Greek and Cyrillic, general
+punctuation, currency, letterlike symbols, arrows and common math operators, with every OpenType
+layout feature and the `name` table kept and hinting dropped. `scripts/subset-ui-candidates.sh`
+downloads the pinned archives, checks their hashes and rebuilds the files; the manifest hash is of
+the subset file. IBM Plex Mono has no Greek letters. Inter and Source Sans 3 here are separate
+from the Latin-catalog copies in `fonts/inter/` and `fonts/source-sans-3/`. Adobe, IBM and
+JetBrains reserve the font names (Source, Plex, JetBrains Mono) in their OFL; the subsets keep
+the original names, so a face the owner picks for shipping must be taken unmodified or renamed.
+
+| Files | Family / styles | Author | Source (pinned) | Licence |
+|---|---|---|---|---|
+| `fonts/ui-candidates/inter/Inter-Regular.ttf`, `fonts/ui-candidates/inter/Inter-SemiBold.ttf` | Inter Regular, SemiBold (static subset) | The Inter Project Authors (Rasmus Andersson) | [Inter 4.1](https://github.com/rsms/inter/releases/tag/v4.1) | OFL-1.1 (`fonts/ui-candidates/inter/OFL.txt`) |
+| `fonts/ui-candidates/ibm-plex-sans/IBMPlexSans-Regular.ttf`, `fonts/ui-candidates/ibm-plex-sans/IBMPlexSans-SemiBold.ttf` | IBM Plex Sans Regular, SemiBold (static subset) | IBM Corp. | [@ibm/plex-sans 1.1.0](https://github.com/IBM/plex/releases/tag/%40ibm%2Fplex-sans%401.1.0) | OFL-1.1 (`fonts/ui-candidates/ibm-plex-sans/OFL.txt`) |
+| `fonts/ui-candidates/source-sans-3/SourceSans3-Regular.ttf`, `fonts/ui-candidates/source-sans-3/SourceSans3-Semibold.ttf` | Source Sans 3 Regular, SemiBold (static subset) | Adobe (Paul D. Hunt) | [Source Sans 3.052R](https://github.com/adobe-fonts/source-sans/releases/tag/3.052R) | OFL-1.1 (`fonts/ui-candidates/source-sans-3/OFL.txt`) |
+| `fonts/ui-candidates/jetbrains-mono/JetBrainsMono-Regular.ttf`, `fonts/ui-candidates/jetbrains-mono/JetBrainsMono-SemiBold.ttf` | JetBrains Mono Regular, SemiBold (static subset) | The JetBrains Mono Project Authors (JetBrains s.r.o.) | [JetBrains Mono v2.304](https://github.com/JetBrains/JetBrainsMono/releases/tag/v2.304) | OFL-1.1 (`fonts/ui-candidates/jetbrains-mono/OFL.txt`) |
+| `fonts/ui-candidates/ibm-plex-mono/IBMPlexMono-Regular.ttf`, `fonts/ui-candidates/ibm-plex-mono/IBMPlexMono-SemiBold.ttf` | IBM Plex Mono Regular, SemiBold (static subset) | IBM Corp. | [@ibm/plex-mono 2.5.0](https://github.com/IBM/plex/releases/tag/%40ibm%2Fplex-mono%402.5.0) | OFL-1.1 (`fonts/ui-candidates/ibm-plex-mono/OFL.txt`) |
+| `fonts/ui-candidates/source-code-pro/SourceCodePro-Regular.ttf`, `fonts/ui-candidates/source-code-pro/SourceCodePro-Semibold.ttf` | Source Code Pro Regular, SemiBold (static subset) | Adobe (Paul D. Hunt) | [Source Code Pro 2.042R-u](https://github.com/adobe-fonts/source-code-pro/releases/tag/2.042R-u%2F1.062R-i%2F1.026R-vf) | OFL-1.1 (`fonts/ui-candidates/source-code-pro/OFL.txt`) |

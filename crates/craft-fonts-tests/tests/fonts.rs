@@ -1652,3 +1652,71 @@ fn all_latin_licences_match_the_reviewed_upstream_catalog() {
         assert_eq!(hex, hash, "{path}: complete upstream licence changed");
     }
 }
+
+/// Candidate interface faces for the design-system specimen. Opt-in and deliberately outside the
+/// default `FONTS` table and every embed feature: apps embed all of `fonts/manifest.txt`.
+const UI_CANDIDATES_MANIFEST: &str = "fonts/ui-candidates-manifest.txt";
+
+#[test]
+fn ui_candidates_are_pinned_subsets_outside_the_other_manifests() {
+    let entries = optional_entries(UI_CANDIDATES_MANIFEST);
+    assert_eq!(entries.len(), 12, "6 families x Regular and SemiBold");
+    let default =
+        std::fs::read_to_string(craft_fonts_tests::repo_root().join("fonts/manifest.txt")).unwrap();
+    let latin =
+        std::fs::read_to_string(craft_fonts_tests::repo_root().join(LATIN_MANIFEST)).unwrap();
+    let root = craft_fonts_tests::repo_root();
+    for e in &entries {
+        let data = bytes_from_entry(e);
+        let hex: String = Sha256::digest(&data)
+            .iter()
+            .map(|b| format!("{b:02x}"))
+            .collect();
+        assert_eq!(
+            hex, e.sha256,
+            "{}: rerun scripts/subset-ui-candidates.sh",
+            e.file
+        );
+        assert!(
+            root.join(&e.licence_file).is_file(),
+            "{}: licence file",
+            e.file
+        );
+        assert_eq!(e.licence, "OFL-1.1", "{}: licence", e.file);
+        assert!(
+            e.source.starts_with("https://"),
+            "{}: pinned source",
+            e.file
+        );
+        assert!(
+            e.file.starts_with("fonts/ui-candidates/")
+                && !default.contains(&e.file)
+                && !latin.contains(&e.file),
+            "{}: must stay out of the default and Latin manifests",
+            e.file
+        );
+
+        let font = FontRef::new(&data).unwrap_or_else(|err| panic!("{}: {err}", e.file));
+        let want = if e.style == "SemiBold" {
+            Weight::SEMI_BOLD
+        } else {
+            Weight::NORMAL
+        };
+        assert_eq!(font.attributes().weight, want, "{}: weight", e.file);
+        assert!(
+            font.axes().is_empty(),
+            "{}: must be a static instance",
+            e.file
+        );
+        let cmap = font.charmap();
+        let mut sample = vec![
+            'A', 'g', '4', 'Ж', 'ж', 'é', 'Ž', 'ạ', '€', '→', '≤', '\u{2212}',
+        ];
+        if e.scripts.iter().any(|s| s == "Grek") {
+            sample.extend(['Σ', 'ω']);
+        }
+        for c in sample {
+            assert!(cmap.map(c).is_some(), "{}: no glyph for {c:?}", e.file);
+        }
+    }
+}
